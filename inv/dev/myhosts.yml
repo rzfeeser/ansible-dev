@@ -1,0 +1,33 @@
+---
+deliverycrew:
+    hosts:
+            # "ungrouped" hosts would go here
+    children:
+            humanoid:
+                    hosts:
+                            fry:
+                                    ansible_user: fry
+                                    ansible_host: 10.10.2.4
+                                    ansible_python_interpreter: /usr/bin/python3
+                            zoidberg:
+                                    ansible_user: zoidberg
+                                    ansible_host: 10.10.2.5
+                                    ansible_python_interpreter: /usr/bin/python3
+                            farnsworth:
+                                    ansible_user: farnsworth
+                                    ansible_host: 10.10.2.6
+                                    ansible_ssh_pass: alta3
+            robot:
+                    hosts:
+                            bender:
+                                    ansible_user: bender
+                                    ansible_host: 10.10.2.3
+                                    ansible_python_interpreter: /usr/bin/python3
+                    # group vars could go below here
+                    # all hosts within robot would inherit
+                    # (these vars are not used, just examples)
+                    vars:
+                            gateway_ip: 172.0.0.1
+                            storage_type: nfs
+                            in_production: false
+
