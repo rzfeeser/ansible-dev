@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Playbook - Install figlet",
+    "hosts": "planetexpress",
+    "gather_facts": "yes",
+    "connection": "ssh",
+    "tasks": [
+      {
+        "name": "using apt to install figlet",
+        "apt": {
+          "name": "figlet",
+          "state": "present"
+        },
+        "become": "yes",
+        "when": "ansible_os_family == \"Debian\""
+      }
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+---
+- name: Using a role to deploy a webservice
+  hosts: web
+  gather_facts: no
+  become: yes
+  
+  roles:
+    - alta3.webservice
+

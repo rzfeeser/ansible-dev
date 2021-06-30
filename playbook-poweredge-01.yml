@@ -1,0 +1,31 @@
+---
+- name: DellEMC PowerEdge - Making contact with DellEMC PowerEdge
+  hosts: localhost    # "localhost" will not allow for forks (threads) to be used against remote connections
+  connection: local   # required - to access the python "omsdk". To install (assuming ansible is running on "python3"),
+                      # python3 -m pip install omsdk --upgrade
+  gather_facts: no    # this would gather_facts about the localhost (connection: local). We want facts / info about the iDRAC
+
+
+  vars:
+          idrac_ip: "{{ ip }}"         # this value needs mapped (ex: 192.168.0.3)
+          idrac_user: "{{ user }}"     # this value needs mapped (ex: admin)
+          idrac_password: "{{ pw }}"   # this value needs mapped (ex: qwerty123)
+
+  tasks:
+
+        # for more information on this module, run...
+        # ansible-doc dellemc.openmanage.idrac_lifecycle_controller_status_info
+        - name: Show status of the Lifecycle Controller
+          dellemc.openmanage.idrac_lifecycle_controller_status_info:
+                  idrac_ip: "{{ idrac_ip }}"
+                  idrac_user: "{{ idrac_user }}"
+                  idrac_password: "{{ idrac_password }}"
+          register: results   # save all of the returned info within the var "results"
+
+        - name: Display the information collected on the Lifecycle Controller
+          debug:
+                  var: results
+
+# to run this solution, you must provide values for "ip", "user", and "pw". An example of this is,
+# ansible-playbook playbook-PowerEdge-01.yml -e ip=192.168.70.22 -e user=larry -e pw=seekrit123
+

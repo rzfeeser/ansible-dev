@@ -1,0 +1,20 @@
+---
+- name: use role distributed with collection
+  hosts: new_servers       # host we want to run the collection against
+  connection: ssh  # default connection type
+  gather_facts: no # no need to collect ansible_facts
+  become: yes
+
+  # this is the collection we want to make part of this playbook namespace
+  #collections:
+  #        - adalovelace.myfirstcollection
+            
+  # this role is within the collection adalovelace.myfirstcollection
+  roles:    
+          - adalovelace.myfirstcollection.webservice
+            
+  tasks:    
+          - name: Tasks run after roles
+            debug:
+                    msg: "Great job! You used a role within the collection adalovelace.myfirstcollection"
+

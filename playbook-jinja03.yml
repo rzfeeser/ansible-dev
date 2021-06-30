@@ -1,0 +1,26 @@
+---
+- name: Using Jinja within our Playbook
+  hosts: planetexpress
+  connection: ssh
+  gather_facts: true    # required for ansible_facts
+
+  tasks:
+
+  - name: Display all ansible_facts
+    debug:
+      var: ansible_facts
+      verbosity: 2        # this will ONLY run if you include -vv
+
+  - name: What does ansible_facts.os_family contain?
+    debug:
+      var: ansible_facts.os_family  
+
+  - name: What does ansible_facts.lsb contain?
+    debug:
+      var: ansible_facts.lsb
+
+  - name: Some task that runs ONLY on hosts that match our condional
+    debug:
+      msg: "I am a Debian host that is running ATLEAST ver 18 of my OS"
+    when: ansible_facts.os_family == "Debian" and ansible_facts.lsb.major_release | int >= 18
+

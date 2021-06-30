@@ -1,0 +1,37 @@
+---
+- name: bootstrapping and new user
+  hosts: raiders
+  connection: ssh
+  gather_facts: False
+
+  tasks:
+
+  # install Python with ansible
+  # the raw module will ALWAYS issue your command
+  # no idempotence here!
+  # therefore, use it sparingly!!
+  - name: "Bootstrap python install"
+    raw: "apt install -y python3-pip"
+    become: yes
+
+  # create a new group
+  - name: Create the new group sandbox
+    group:
+      name: sandbox
+      state: present
+    become: yes
+
+  # create new user on target system
+  - name: Add user 'exampleuser' with group of 'sandbox'
+    user:
+      name: exampleuser
+      comment: "Example User"
+      # password: alta3      # pass as hash
+      state: present
+      shell: /bin/bash       # Defaults to /bin/bash
+      system: no             # Defaults to no
+      createhome: yes        # Defaults to yes
+      # home: /home/exampleuser  # Defaults to /home/<username>
+      group: sandbox
+    become: yes            
+

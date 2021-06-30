@@ -1,0 +1,20 @@
+---
+- name: bootstrapping and new user
+  hosts: raiders
+  gather_facts: False
+
+  tasks:
+  # Remove the user 'exampleuser'
+  - name: remove a user
+    user:
+     name: exampleuser
+     state: absent
+     remove: yes
+    become: yes
+
+  - name: Remove the group sandbox
+    group:
+      name: sandbox
+      state: absent
+    become: yes
+

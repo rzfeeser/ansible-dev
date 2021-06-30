@@ -1,0 +1,21 @@
+# sample inventory with 3 groups
+# "host_vars" are being used to pass unique values to our PowerEdge Playbook
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence
+[poweredge-west]
+pe-01   user=shredder  ip=192.168.70.2
+pe-02   user=krang     ip=192.168.20.11
+
+# these are "group_vars" and passed to the group "poweredge-west"
+[poweredge-west:vars]
+pw=seekritpass
+
+[poweredge-east]
+pe-03    user=donatello  ip=192.168.33.10  pw=pizzatime55
+pe-04    user=leonardo   ip=192.168.23.12  pw=cowabunga!
+pe-05    user=splinter   ip=172.32.12.22   pw=radical1984
+
+# unified-campus is a "group of groups"
+[unified-campus:children]
+poweredge-west
+poweredge-east
+

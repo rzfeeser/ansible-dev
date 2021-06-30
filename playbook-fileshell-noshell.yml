@@ -1,0 +1,19 @@
+---
+- name: A simple file playbook
+  hosts: planetexpress
+  gather_facts: yes
+
+  tasks:
+   - name: make a directory
+     file:
+       path: ~/output/
+       state: directory
+
+       #- name: use shell module with wildcarding
+       #  shell: echo $HOME >> ~/output/path.txt
+
+   - name: use copy to avoid using a shell command
+     copy:
+       content: "{{ lookup('env', 'HOME') }}"
+       dest: ~/output/path.txt
+       force: yes

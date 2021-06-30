@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+# 
+#
+# /etc/fstab format:
+#
+#  device  mount_point  file_system_type  options  backup_operation  file_system_check_order
+#
+
+{{ sahil }}
+
+{% if fstab_entries is defined %}
+
+{% for fs in fstab_entries %}
+{{fs.device}} {{fs.mount_point}} {{fs.file_system}} {{fs.options}} {{fs.zach}} {{fs.file_sys_check}} 
+{% endfor %}
+
+{% else %}
+# No data was found when ansible attempted to generate /etc/fstab
+{% endif %}
+

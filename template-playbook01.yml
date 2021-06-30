@@ -1,0 +1,49 @@
+---
+- name: Exploring the template module and jinja expressions
+  hosts: planetexpress
+  connection: ssh    # default "ssh"
+  gather_facts: no   # default "yes" - runs the "setup" module on remote hosts
+
+  # these variables are used to generate /etc/fstab from a template
+  vars:
+          # fstab_entries is a dictionary containing a list
+          # each list entry is a new line within /etc/fstab
+          fstab_entries:
+                  # each list item is a dictionary containing (6) key:values
+                  # debugfs /sys/kernel/debug debugfs noauto 0 0
+                  - device: debugfs
+                    # specify the mount point where disk should be mounted
+                    mount_point: /sys/kernel/debug
+                    # file system type
+                    file_system: debugfs
+                    # mount options, separated by commas
+                    options: noauto
+                    # 1 for dump utility backup partition
+                    # 0 turns this off
+                    backup: 0
+                    # determines the order that fsck checks the dev/partition for errors at boot time
+                    # 0 means fsck should not check a file system
+                    file_sys_check: 0
+                  - device: /dev/sda2
+                    mount_point: /
+                    file_system: ext3
+                    options: acl,user_xattr
+                    backup: 1
+                    file_sys_check: 1
+                  - device: /dev/sdc1
+                    mount_point: /novi_disk
+                    file_system: ext3
+                    options: acl,user_xattr,usrquota,grpquota
+                    backup: 0
+                    file_sys_check: 2
+
+
+  tasks:
+    # here we create file we might use for configurating /etc/fstab
+    # or ensuring /etc/fstab is in compliance
+    - name: Create a dynamic /etc/fstab file from a static template
+      template:
+        src: templates/fstab.j2    # name of the template on ansible controller
+        dest: ~/fstab_example   # name of the completed file to be 
+                                #    placed on the target system
+

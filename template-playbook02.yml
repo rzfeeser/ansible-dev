@@ -1,0 +1,23 @@
+---
+- name: Exploring the template module and jinja expressions
+  hosts: planetexpress
+  connection: ssh    # default "ssh"
+  gather_facts: no   # default "yes" - runs the "setup" module on remote hosts
+
+  vars:
+    sahil: "great question"
+    ansible_managed: "This file managed by the Ansible team."
+
+  # these variables are used to generate /etc/fstab from a template
+  vars_files:
+    - vars/fstab.yml
+
+  tasks:
+    # here we create file we might use for configurating /etc/fstab
+    # or ensuring /etc/fstab is in compliance
+    - name: Create a dynamic /etc/fstab file from a static template
+      template:
+        src: templates/fstab.j2    # name of the template on ansible controller
+        dest: ~/fstab_example   # name of the completed file to be 
+                                #    placed on the target system
+

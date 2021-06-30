@@ -1,0 +1,37 @@
+---
+- name: DellEMC PowerEdge - Making contact with DellEMC PowerEdge
+  hosts: poweredge-east    # the "group" from the inventory we wish to run against (ex: poweredge-west, poweredge-east, unified-campus)
+  connection: local   # required - to access the python "omsdk". To install (assuming ansible is running on "python3"),
+                      # python3 -m pip install omsdk --upgrade
+  gather_facts: no    # this would gather_facts about the localhost (connection: local). We want facts / info about the iDRAC
+
+
+  vars:
+          # this was a requirement for us if our controller was MULTI-HOMED with python2.7 and 3.x+
+          # It appears that when an inventory is invoked, the modules want to DEFAULT to using python2.7
+          # even if ansible is being supported by a 3.x+ installation!! This "hack around" prevents the error
+          # the python library "omsdk" not found
+          ansible_python_interpreter: "/usr/bin/python3"
+
+          idrac_ip: "{{ ip }}"         # this value needs mapped (ex: 192.168.0.3)
+          idrac_user: "{{ user }}"     # this value needs mapped (ex: admin)
+          idrac_password: "{{ pw }}"   # this value needs mapped (ex: qwerty123)
+
+  tasks:
+
+        # for more information on this module, run...
+        # ansible-doc dellemc.openmanage.idrac_lifecycle_controller_status_info
+        - name: Show status of the Lifecycle Controller
+          dellemc.openmanage.idrac_lifecycle_controller_status_info:
+                  idrac_ip: "{{ idrac_ip }}"
+                  idrac_user: "{{ idrac_user }}"
+                  idrac_password: "{{ idrac_password }}"
+          register: results   # save all of the returned info within the var "results"
+
+        - name: Display the information collected on the Lifecycle Controller
+          debug:
+                  var: results
+
+# to run this solution, you must provide values for "ip", "user", and "pw". An example of this is,
+# ansible-playbook playbook-PowerEdge-02-inv.yml -i inv/dev/poweredge_hosts
+

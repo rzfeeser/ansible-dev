@@ -1,0 +1,30 @@
+---
+- name: Creating a bindmount
+  hosts: storage        # group name from the inventory
+  gather_facts: no      # no need to run setup (collect facts) on remote machines
+  become: yes
+  connection: local     # targeting our local machine, no need to SSH
+  
+  vars:
+    here_there: present # defines the variable "here_there" with value "present"
+
+  tasks:
+    
+    # Mount can create a mount point,
+    # but so can we, with the 'file' module
+    - name: Create the path to the mount point
+      file:
+              path: /home/student/bindmnt
+              state: directory
+
+    - name: Bind mount a volume
+      mount:
+              path: /home/student/bindmnt # path to the mount point
+              src: /tmp                   # dev to be mounted on the path
+              opts: bind
+              fstype: none
+              state: "{{ here_there }}"   # present == configured in /etc/fstab
+                                          # absent == devices will be unmounted and removed from /etc/fstab
+                                          # see documentation for other options
+                                          # mounted == device is mounted and configured in /etc/fstab. If mount point is not created, it will be created.
+
