@@ -1,0 +1,39 @@
+---
+- name: A playbook that manipulates data from uri
+  hosts: localhost
+
+  vars:
+    uritouse: "https://statsapi.web.nhl.com/api/v1/teams"
+
+  tasks:
+
+  - name: Use URI module to send HTTP GET
+    uri:
+      method: GET
+      url: "{{ uritouse }}"
+    register: results
+    tags:
+      - keys
+      - upper
+      - stringslice
+
+  - name: Use python to show all dictionary keys with python
+    debug:
+      var: results.json.keys()   # .keys() is a python dict method
+    tags:
+      - keys
+
+  - name: Loop across the teams and display the team locations made uppercase with python
+    debug:
+      var: item.venue.name.upper()  # .upper() is a python string method
+    loop: "{{ results.json.teams }}"
+    tags:
+      - upper
+
+  # transform http://pittsburghpenguins.com/ into pittsburghpenguins.com
+  - name: Loop across the teams and write out a lite of URLs without the http:// or trailing /
+    shell: "echo {{ item.officialSiteUrl.lstrip('http://').rstrip('/') }} >> /tmp/teamsites.txt"
+    loop: "{{ results.json.teams }}"
+    tags:
+      - stringslice
+

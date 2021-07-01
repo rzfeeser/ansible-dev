@@ -1,0 +1,34 @@
+---
+- name: HPE OneView - Making contact with a MANY HPE OneView Servers
+  hosts: oneview-east # the "group" from the inventory we wish to run against (ex: oneview-west, oneview-east, unified-campus)
+  connection: local   # required - to access the python clients. To install (assuming ansible is running on "python3"),
+                      # python3 -m pip install hpICsp --upgrade
+                      # python3 -m pip install hpeOneView --upgrade
+  gather_facts: no    # this would gather_facts about the localhost (connection: local).
+
+
+  #collections:
+  #        - hpe.oneview
+
+  vars:
+          oneview_ip: "{{ ip }}"         # this value needs mapped (ex: 192.168.0.3)
+          oneview_user: "{{ user }}"     # this value needs mapped (ex: admin)
+          oneview_password: "{{ pw }}"   # this value needs mapped (ex: qwerty123)
+          api_version: 1200              # api on a single oneview, default value
+
+  tasks:
+
+        - name: Gather facts about all Server Hardwares
+          hpe.oneview.oneview_server_hardware_facts:   # appears to define a variable called "server_hardwares"(sic), not "ansible_facts"
+            hostname: "{{ oneview_ip }}"
+            username: "{{ oneview_user }}"
+            password: "{{ oneview_password }}"
+            api_version: "{{ api_version }}"
+          register: results
+
+        - name: Display the facts - They appear to be stored in "server_hardwares", which is against best practice
+          debug:
+                 var: server_hardwares  # if this doesn't work, swap with, results
+
+# to run this solution, you must provide values for "ip", "user", and "pw". An example of this is,
+# ansible-playbook playbook-oneview-02-inv.yml -i path/to/inv

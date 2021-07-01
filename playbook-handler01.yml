@@ -1,0 +1,47 @@
+---
+- name: Apache server installed
+  hosts: web
+  gather_facts: no
+  become: yes
+
+  tasks:
+
+  # the package module tries to select
+  # yum or apt or pkg5 (etc) automatically
+  - name: latest Apache version installed
+    package:
+      name: apache2
+      state: latest
+
+  - name: Apache enabled and running
+    service:
+      name: apache2
+      enabled: yes
+      state: started
+
+  # Copy index.html into the service
+  - name: copy index.html
+    copy:
+      src: ~/ans/files/index.html
+      dest: /var/www/html/
+    notify:
+        - restart_apache
+
+  # if dest is directory download every time
+  # but only replace if destination is different
+  - name: Download a copy of apache2.conf
+    get_url:
+      url: https://raw.githubusercontent.com/rzfeeser/alta3files/master/apache2.conf
+      dest: /etc/apache2/
+    notify:
+        - restart_apache
+
+  # This will ONLY run if the associated tasks run
+  # no matter how many times called these tasks
+  # will ONLY run once
+  handlers:
+  - name: restart_apache
+    service:
+      name: apache2
+      state: restarted
+
