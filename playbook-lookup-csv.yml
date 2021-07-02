@@ -1,0 +1,22 @@
+---
+- name: Using "csvfile" Lookup Plugin to make "selective" choices from CSV data
+  hosts: localhost
+  connection: local
+  gather_facts: False
+
+  # The "csvfile" lookup plugin is for making "selective" choices from CSV data.
+  # If you want to convert entire CSV files to lists of dicts, use the ansible module,
+  #   community.general.read_csv
+
+  vars:
+          ip_poweredge_svr02: "{{ lookup('csvfile', 'pe02 file=~/ans/files/ip_data.csv delimiter=,') }}"
+
+  tasks:
+          - name: Display the IP of the var ip_poweredge_svr02 as taken from our CSV file
+            debug:
+                    var: ip_poweredge_svr02  # displays, "192.168.44.21"
+
+
+          - name: Display the status of pe06 as taken from our CSV file
+            debug:
+                    var: lookup('csvfile', 'pe06 file=~/ans/files/ip_data.csv delimiter=, col=3') # displays, "online"
